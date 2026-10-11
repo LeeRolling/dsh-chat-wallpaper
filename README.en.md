@@ -272,6 +272,11 @@ code changes need a restart):
   // When to start playing: wait for the boot animation to finish (otherwise the
   // intro plays while it is still covered).
   "waitForBoot": true,
+  // Play the intro once per session (the same strategy the boot animation uses —
+  // it also records this in sessionStorage). Needed because saving client.js
+  // triggers a plugin hot-reload = a page refresh, which would otherwise replay
+  // the intro. Want to see it again? Use the panel's "Replay intro".
+  "oncePerSession": true,
   "bootOverlaySelectors": ["#dsh-startup-root"],
   // The classes that mean "the boot animation has started leaving" — this is what
   // decides the cross-dissolve timing. Change it if you use another boot plugin.

@@ -42,7 +42,16 @@ function mkEl(tag) {
 }
 
 const sandbox = {
-  window: { __ModuleLoader__: { load(o) { captured = o } } },
+  window: {
+    __ModuleLoader__: { load(o) { captured = o } },
+    /* sessionStorage：一轮会话只放一次开场的标记存在这里（真实实现同款）*/
+    sessionStorage: {
+      _m: new Map(),
+      getItem(k) { return this._m.has(k) ? this._m.get(k) : null },
+      setItem(k, v) { this._m.set(k, String(v)) },
+      removeItem(k) { this._m.delete(k) },
+    },
+  },
   console,
   __overlay: null,
   createdVideos: [],
@@ -65,10 +74,16 @@ const sandbox = {
 }
 
 function tick(n = 1) { for (let i = 0; i < n; i++) for (const t of timers) if (!t.cleared) t.fn() }
-function reset() {
+/**
+ * 每个场景 = 一次全新页面加载。
+ * keepSession=true 表示"同一次会话里刷新"（sessionStorage 要保留）——
+ * 场景 I 专门测这个，所以它自己控制。
+ */
+function reset(keepSession) {
   timers.length = 0
   sandbox.createdVideos.length = 0
   sandbox.document.body.children.length = 0
+  if (!keepSession) { try { sandbox.window.sessionStorage._m.clear() } catch (e) {} }
   /* preloaded 是模块级缓存，跨场景会留着 —— 用 teardown 清掉它，
      否则后面的场景复用它、createdVideos 里就没有新元素了 */
   try { mod.__teardown() } catch (e) { /* 第一次调用时 mod 还没赋值 */ }
@@ -159,9 +174,10 @@ ok(!!layerEl(), '★ 收场后立刻挂上')
 ok(lastVideo().currentTime === 0, '★ 从 0 开始（片头能看见了）')
 
 console.log('\n=== C3. 已经放了，开机层才出现 → 应该把层撤掉等 ===')
+console.log('   （这条测的是"撤层再挂回"的机制，所以显式关掉"一轮一次"）')
 reset()
 sandbox.__overlay = null
-mod.__startWhenFree({ placement: 'front' })
+mod.__startWhenFree({ placement: 'front', oncePerSession: false })
 tick(61)
 ok(!!layerEl(), '先挂上开播了')
 sandbox.__overlay = overlay(true)
@@ -228,6 +244,44 @@ sandbox.__overlay = overlay(false)
 mod.__beginIntro({ placement: 'front' }, '测试')
 ok(lastVideo() === v0, '用的是这个元素')
 ok(v0.currentTime === 99, '★ readyState=0 时**不设** currentTime（否则会卡在 seek，play 永不生效）', 'currentTime=' + v0.currentTime)
+
+console.log('\n=== I. ★ 一轮会话只放一次开场（刷新/热重载不再重播）===')
+console.log('   （触发这个需求的是：保存 client.js 会热重载 = 一次刷新 = 又重播一遍）')
+reset(true)                                // 新会话（自己清标记）
+sandbox.window.sessionStorage._m.clear()
+sandbox.__overlay = null
+mod.__applyNow({ placement: 'front', mode: 'once' })   // 走真实入口（current/panelCfg 才会设上）
+tick(70)
+ok(!!layerEl(), '第一次：闸门开了 → 播了')
+ok(sandbox.window.sessionStorage.getItem('dsh-chat-wallpaper:intro-shown') === '1',
+  '★ 播的时候会写下"这轮放过了"的标记')
+
+/* 模拟一次刷新：**同一次会话**（sessionStorage 保留）、DOM 清空、重新自举 */
+reset(true)
+sandbox.__overlay = null
+mod.__applyNow({ placement: 'front', mode: 'once' })
+tick(70)
+ok(!layerEl(), '★★ 刷新后【不再重播】（这就是"视频疯狂自己跳"的修复）')
+
+/* 手动重播：必须能突破这个标记 */
+mod.__replayIntro()
+ok(!!layerEl(), '★★ 面板的「🔁 重播开场」照样能重播（它显式清掉标记）')
+
+/* 关掉这个策略 → 每次都播 */
+reset()
+sandbox.window.sessionStorage.setItem('dsh-chat-wallpaper:intro-shown', '1')
+sandbox.__overlay = null
+mod.__startWhenFree({ placement: 'front', mode: 'once', oncePerSession: false })
+tick(70)
+ok(!!layerEl(), 'oncePerSession:false → 每次都播')
+
+/* 常驻背景（behind + loop）不受影响：它每轮都该出现 */
+reset()
+sandbox.window.sessionStorage.setItem('dsh-chat-wallpaper:intro-shown', '1')
+sandbox.__overlay = null
+mod.__startWhenFree({ placement: 'behind', mode: 'loop' })
+tick(70)
+ok(!!layerEl(), '★ 常驻背景模式不受"一轮一次"限制（那是背景，不是开场）')
 
 console.log(`\n${fails === 0 ? '✓ 全部通过' : `✗ ${fails} 项失败`}\n`)
 process.exit(fails === 0 ? 0 : 1)

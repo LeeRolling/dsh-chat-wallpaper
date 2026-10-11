@@ -241,6 +241,10 @@ dsh plugin --profile <你的 profile> add link:<本仓库路径>
 
   // 什么时候开始播：等开机动画收场再播（否则片头会被开机动画盖过去）
   "waitForBoot": true,
+  // 一轮会话只放一次（和开机动画同一个策略，它也记 sessionStorage）。
+  // 为什么需要：保存 client.js 会触发插件热重载 = 一次刷新，
+  // 没这个标记的话开场会被反复重播。想再看 → 面板的「🔁 重播开场」。
+  "oncePerSession": true,
   "bootOverlaySelectors": ["#dsh-startup-root"],
   // 开机动画"开始离场"的信号 class —— 决定叠化时机，换插件时改这里
   "bootLeaveClasses": ["dsu-handoff", "dsu-gone"],
