@@ -16,7 +16,10 @@ let timeoutId = 0
 
 function mkEl(tag) {
   const el = {
-    tagName: tag, id: '', className: '', dataset: {}, style: {}, attributes: [],
+    tagName: tag, id: '', className: '', dataset: {}, attributes: [],
+    /* style 要支持 setProperty —— 横幅的浓度是通过 CSS 变量传的 */
+    style: { _v: {}, setProperty(k, v) { this._v[k] = String(v) }, removeProperty(k) { delete this._v[k] } },
+    getBoundingClientRect: () => ({ width: 800, height: 400 }),
     children: [], parentNode: null, src: '', alt: '',
     duration: 7.0417, currentTime: 0, paused: true, loop: false, videoWidth: 2560, videoHeight: 1440,
     _handlers: {},
@@ -42,7 +45,7 @@ function mkEl(tag) {
 }
 
 const sandbox = {
-  window: { __ModuleLoader__: { load(o) { captured = o } } },
+  window: { __ModuleLoader__: { load(o) { captured = o } }, innerWidth: 1600, addEventListener() {}, removeEventListener() {} },
   console,
   _styleTags: [],
   document: {
@@ -67,7 +70,7 @@ const sandbox = {
     this.observe = () => {}
     this.disconnect = () => { const i = sandbox._observers.indexOf(cb); if (i >= 0) sandbox._observers.splice(i, 1) }
   },
-  requestAnimationFrame: () => 1,
+  requestAnimationFrame: (fn) => { if (typeof fn === 'function') fn(); return 1 },
   cancelAnimationFrame: () => {},
   fetch: () => Promise.reject(new Error('no network')),
 }
@@ -272,6 +275,40 @@ ok(vF.loop === false, '★ front + loop → 仍然关掉原生 loop（不然会�
 layer().fire('click')
 ok(layer().style.opacity !== '0',
   '★★ 点它【不会】触发跳过 —— 全屏层不再吃用户的点击（这就是你刚报的 bug）')
+
+console.log("\n=== H. 大字横幅：视频演完进聊天，一眼看到铺满窗口的那行字 ===")
+timeouts.length = 0
+sandbox._intervals.length = 0
+sandbox.document.body.children.length = 0
+sandbox._styleTags.length = 0
+const cfgB = { ...cfg, banner: '人类与AI的日常', bannerOpacity: 0.15 }
+mod.__applyNow(cfgB)
+const bEl = sandbox.document.getElementById('dsh-cw-banner')
+ok(!!bEl, '★ 挂了横幅层 #dsh-cw-banner')
+const bSpan = bEl && bEl.children[0]
+ok(bSpan && bSpan.textContent === '人类与AI的日常', '文字正确', bSpan && bSpan.textContent)
+ok(bEl.style._v['--cw-banner-a'] === '0.15', '★ 浓度通过 CSS 变量传下去', bEl.style._v['--cw-banner-a'])
+ok(bSpan.style.fontSize !== undefined && bSpan.style.fontSize !== '', '★ 插进 DOM 后自动量过字号', bSpan.style.fontSize)
+
+const cssB = mod.__buildCss(cfgB)
+ok(cssB.includes('#dsh-cw-banner'), 'CSS 里有横幅规则')
+const bannerBlock = cssB.split('#dsh-cw-banner')[1] || ''
+ok(bannerBlock.includes('z-index: -1'),
+  '★★ 横幅 z-index:-1 —— 在底图之上、聊天内容之下（不挡聊天）')
+ok(cssB.includes('--dsw-alias-bg-base: transparent'),
+  '★★ 有横幅 → 外壳让开（否则大字被外壳底色挡住，白做）')
+ok(cssB.includes('white-space: nowrap'), '不换行（一行铺满）')
+ok(/#dsh-cw-banner > span[\s\S]*?font-weight: 800/.test(cssB) || /font-weight: 800/.test(cssB),
+  '加粗（大字要够分量）')
+
+/* 改文字：只更新，不重建（避免闪烁）*/
+const sameEl = mod.__mountBanner({ ...cfgB, banner: '换个字' })
+ok(sameEl === bEl, '★ 改文字时复用同一个元素（不重建）')
+ok(bSpan.textContent === '换个字', '文字更新了')
+
+/* 清空 → 移除 */
+mod.__applyNow({ ...cfg, banner: '' })
+ok(!sandbox.document.getElementById('dsh-cw-banner'), '★ 清空文字 → 横幅层被移除')
 
 console.log(`\n${fails === 0 ? '✓ 全部通过' : `✗ ${fails} 项失败`}\n`)
 process.exit(fails === 0 ? 0 : 1)
