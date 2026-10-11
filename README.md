@@ -1,5 +1,7 @@
 # dsh-chat-wallpaper
 
+[English](README.en.md) · **中文**
+
 > 给 [DeepSeek Harness](https://github.com/deepseek-ai) 的**开场视频 + 聊天底图**插件。
 >
 > 开机动画放完之后，全屏接一段你自己的视频当"第二幕"；放完淡出、交回聊天窗口。
