@@ -1,0 +1,10 @@
+# dsh-chat-wallpaper bundle patch layer.
+#
+# Contributes one host row for this package. The host half exists so the Loader
+# has an entry to scan (client-modules finds the same entry, sees `dsh.client`
+# plus the `./client` export, and injects the browser half into the client boot
+# graph) — and so the video can be streamed from a real HTTP route instead of a
+# file:// URL, which the renderer will not play.
+- insert:
+    - id: chat-wallpaper
+      name: 'dsh-chat-wallpaper'

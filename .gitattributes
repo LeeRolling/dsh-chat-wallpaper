@@ -1,0 +1,7 @@
+# 统一换行符：仓库里一律 LF（避免 Windows 上 CRLF 反复改动的噪音）
+* text=auto eol=lf
+
+# 二进制（本仓库其实不含，留着以防将来）
+*.png binary
+*.jpg binary
+*.mp4 binary

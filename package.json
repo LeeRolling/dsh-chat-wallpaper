@@ -1,0 +1,53 @@
+{
+  "name": "dsh-chat-wallpaper",
+  "version": "0.1.0",
+  "description": "给 DeepSeek Harness 的开场视频 + 聊天底图插件：开机动画之后全屏播一段视频、播完淡出交回聊天，底图由用户自选。A fullscreen intro video + user-chosen chat wallpaper plugin for DSH.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/smoke-client.mjs && node test/smoke-mount.mjs && node test/smoke-start.mjs && node test/smoke-once.mjs && node test/smoke-timecode.mjs && node test/smoke-panel.mjs && node test/smoke-panel-client.mjs && node test/smoke-host.mjs",
+    "test:client": "node test/smoke-client.mjs",
+    "test:mount": "node test/smoke-mount.mjs",
+    "test:start": "node test/smoke-start.mjs",
+    "test:once": "node test/smoke-once.mjs",
+    "test:timecode": "node test/smoke-timecode.mjs",
+    "test:panel": "node test/smoke-panel.mjs && node test/smoke-panel-client.mjs",
+    "inspect": "node test/inspect-mp4.mjs",
+    "fps": "node test/probe-fps.mjs",
+    "broken": "node test/make-nofix.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "wallpaper",
+    "background",
+    "intro",
+    "video",
+    "cordis"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  }
+}

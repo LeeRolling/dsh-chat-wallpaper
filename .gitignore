@@ -1,0 +1,33 @@
+# 依赖 / 构建产物（本插件无构建步骤）
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 测试临时产物
+test/client.nofix.js
+*.log
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 你自己的素材（**永远不要提交**）
+# 视频、音频、图片一律不进仓库 —— 见 README「致谢与来源」
+*.mp4
+*.webm
+*.mov
+*.m4v
+*.mp3
+*.wav
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.avif
+
+# 本地配置里可能带个人路径
+chat-wallpaper.json
