@@ -25,7 +25,7 @@ busy your wallpaper is, text stays readable.
 
 ## Contents
 
-- [Two layers, fully decoupled](#two-layers-fully-decoupled)
+- [Three layers, each doing one job](#three-layers-each-doing-one-job)
 - [How it does "background, not overlay"](#how-it-does-background-not-overlay)
 - [The cross-dissolve: the hardest part of this plugin](#the-cross-dissolve-the-hardest-part-of-this-plugin)
 - [Install](#install)
@@ -40,7 +40,7 @@ busy your wallpaper is, text stays readable.
 
 ---
 
-## Two layers, fully decoupled
+## Three layers, each doing one job
 
 ```
    z-index 2147482990  ┌─ #dsh-chat-wallpaper ─ intro video (placement="front")
@@ -50,18 +50,27 @@ busy your wallpaper is, text stays readable.
                        └───────────────────────────────────────────────
          normal flow   │  chat UI / sidebar / composer
                        └───────────────────────────────────────────────
-            z-index -1  ┌─ #dsh-cw-bg ─ chat wallpaper + veil (optional)
+            z-index -1  ┌─ #dsh-cw-banner ─ big text banner (optional)
+                       │   one line of huge text filling the window
+                       │   (real vector text, not a stretched image)
+                       └───────────────────────────────────────────────
+            z-index -2  ┌─ #dsh-cw-bg ─ chat wallpaper + veil (optional)
                        │   an image of your choosing; the chat sits on top of it
                        └───────────────────────────────────────────────
 ```
 
-**These two are independent of each other:**
+**All three are independent:**
 
 | What you configure | Result |
 |---|---|
 | Video only | boot → fullscreen intro plays once → fades out → back to the DSH default background |
 | Wallpaper only | no intro; the chat simply sits on your image |
-| Both | the intro plays in front, fades out, revealing the chat over your wallpaper |
+| Banner only | no intro; one huge line of text sits behind the chat |
+| Video + wallpaper + banner | **the intro plays in front, fades out, revealing the chat over your wallpaper and the banner** |
+
+> The banner lives at `z-index:-1` (above the wallpaper, below the chat) — so it
+> **never covers the chat text**. And it is **real text, not an image**: vector,
+> so it stays sharp at any size.
 
 ---
 
@@ -202,6 +211,11 @@ Both can also be pinned to an absolute path in the config (below).
 │ Veil strength (dark theme)  50%              │
 │ ▬▬▬▬▬●▬▬▬▬▬                                 │  ← applies live, no refresh
 │                                             │
+│ Big text banner (one line, fills the window) │
+│ [人类与AI的日常              ]                │  ← type here to change it
+│ Banner strength  18%                         │
+│ ▬▬▬●▬▬▬▬▬▬▬                                 │
+│                                             │
 │ Intro video: ● Fullscreen intro: play once → fade → chat │
 │              ○ Persistent background: loop behind chat   │
 └─────────────────────────────────────────────┘
@@ -241,6 +255,12 @@ code changes need a restart):
   // Chat wallpaper (independent of the video): empty = newest file in ~/.dsh/chat-wallpaper/
   "image": "",
   "imageFit": "cover",
+
+  // Big text banner: one line of huge text filling the window. Empty = no banner.
+  // The font size is computed automatically (measure once at 100px, then scale to
+  // the window width), so it is accurate for mixed CJK/Latin text too.
+  "banner": "人类与AI的日常",
+  "bannerOpacity": 0.12,          // 0.08 ~ 0.25 works well: visible without hiding chat text
 
   // Only meaningful for mode="loop": play through once, then loop within
   // [loopStart, loopEnd]. loopStart accepts an NLE timecode; the host converts
