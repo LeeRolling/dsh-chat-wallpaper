@@ -10,6 +10,8 @@
 > screen back to the chat — over a wallpaper you pick yourself.
 > Swapping the wallpaper means dropping an image into a folder.
 
+🎬 **Demo (Bilibili, 37s): <https://www.bilibili.com/video/BV1wspE6EE8b>**
+
 ```
    boot animation (your dsh-startup-screen)
         ↓  cross-dissolve (no hard cut, and no flash)
