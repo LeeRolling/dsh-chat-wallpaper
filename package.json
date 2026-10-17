@@ -1,6 +1,6 @@
 {
     "name":  "dsh-chat-wallpaper",
-    "version":  "0.2.1",
+    "version":  "0.2.2",
     "description":  "缁?DeepSeek Harness 鐨勫紑鍦鸿棰?+ 鑱婂ぉ搴曞浘 + 澶у瓧妯箙鎻掍欢锛氬紑鏈哄姩鐢讳箣鍚庡叏灞忔挱涓€娈佃棰戙€佹挱瀹屾贰鍑轰氦鍥炶亰澶╋紝搴曞浘涓庡ぇ瀛楃敱鐢ㄦ埛鑷€夈€侫 fullscreen intro video + chat wallpaper + big text banner plugin for DSH.",
     "type":  "module",
     "main":  "lib/index.js",
