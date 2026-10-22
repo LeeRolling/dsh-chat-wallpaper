@@ -199,7 +199,7 @@ Both can also be pinned to an absolute path in the config (below).
 
 ## Settings panel
 
-**There is a「🖼 背景」button in the bottom-left corner** — it opens everything:
+**Where: Settings →「Chat background」** (near the bottom of the settings dialog's left nav) — this page has everything:
 
 ```
 ┌─ Chat background ───────────────────────────┐
@@ -223,9 +223,11 @@ Both can also be pinned to an absolute path in the config (below).
 └─────────────────────────────────────────────┘
 ```
 
-**The panel is independent of the wallpaper layer** (its own root element, its
-own `<style>` tag, its own theme class) — so after the intro finishes and the
-video layer is removed, the settings entry point is **still there**.
+**This settings page is independent of the wallpaper layer** (its own root
+element, its own `<style>` tag) — so after the intro finishes and the video
+layer is removed, you can still open it from Settings. Closing the settings
+dialog unmounts the page DOM; reopening attaches the same DOM again without
+rebuilding it.
 
 There is also a **「🔁 Replay intro」** button: the intro only plays once per
 boot, so this lets you re-record it as many times as you like without
@@ -277,7 +279,7 @@ code changes need a restart):
   // Play the intro once per session (the same strategy the boot animation uses —
   // it also records this in sessionStorage). Needed because saving client.js
   // triggers a plugin hot-reload = a page refresh, which would otherwise replay
-  // the intro. Want to see it again? Use the panel's "Replay intro".
+  // the intro. Want to see it again? Use Settings →「Chat background」→「🔁 Replay intro」.
   "oncePerSession": true,
   "bootOverlaySelectors": ["#dsh-startup-root"],
   // The classes that mean "the boot animation has started leaving" — this is what
@@ -297,7 +299,7 @@ code changes need a restart):
 }
 ```
 
-> Config-only changes / swapping images / using the panel → **a page refresh is
+> Config-only changes / swapping images / using the settings page → **a page refresh is
 > enough**. Note that inside Electron's DevTools you must open the devtools with
 > `F12` first, otherwise `Ctrl+R` may not bypass the cache.
 
