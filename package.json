@@ -1,7 +1,7 @@
 {
     "name":  "dsh-chat-wallpaper",
     "version":  "0.2.3",
-    "description":  "�� DeepSeek Harness �Ŀ�����Ƶ + �����ͼ + ���ֺ���������������֮��ȫ����һ����Ƶ�����국���������죬��ͼ��������û���ѡ��A fullscreen intro video + chat wallpaper + big text banner plugin for DSH.",
+    "description":  "给 DeepSeek Harness 的开场视频 + 聊天底图 + 大字横幅插件：开机动画之后全屏播一段视频、播完淡出交回聊天，底图与大字由用户自选。A fullscreen intro video + chat wallpaper + big text banner plugin for DSH.",
     "type":  "module",
     "main":  "lib/index.js",
     "exports":  {
