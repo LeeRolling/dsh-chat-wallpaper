@@ -164,6 +164,16 @@ dsh plugin --profile <你的 profile> add link:<本仓库路径>
 ~/.dsh/boot-animation/videos/
 ```
 
+> ⚠️ **桌面版（Electron）用户请用 VP9/WebM**。桌面版 Electron 不带 H.264 解码器，
+> 片库的 mp4 一放就是 `PIPELINE_ERROR_DECODE`（code 3）。插件现在的处理是：
+> 只撤视频层、保住底图/横幅，并在日志里给出提示。转一遍即可：
+>
+> ```
+> ffmpeg -i in.mp4 -c:v libvpx-vp9 -b:v 0 -crf 30 -an out.webm
+> ```
+>
+> Web 端（浏览器）没有这个限制，mp4 / webm 都能放。
+
 **换底图** —— 丢进这个文件夹就会自动用：
 
 ```
@@ -300,7 +310,7 @@ node test/probe-fps.mjs "你的视频.mp4"
 
 ## 测试
 
-**八个测试套件，全部不需要启动 DSH**（用 `node:vm` + 手写的 DOM 桩）：
+**九个测试套件，全部不需要启动 DSH**（用 `node:vm` + 手写的 DOM 桩）：
 
 ```bash
 npm test
@@ -312,6 +322,7 @@ npm test
 | `smoke-mount` | **挂载幂等**（防"点一下窗口背景闪一下并从 0 重播"）+ 循环区间 |
 | `smoke-start` | **起始时机闸门**：开机动画期间**层都不许挂**；`dsu-handoff` 一到就上场 |
 | `smoke-once` | `once` 播完 → 淡出 → 进聊天；两层解耦；**复活回归**；front 模式不吞点击 |
+| `smoke-decode` | **解码失败优雅降级**：code 3 只撤视频层、底图/横幅留住；加载失败仍全撤 |
 | `smoke-timecode` | `HH:MM:SS:FF` → 秒的换算（含交叉验证） |
 | `smoke-panel` / `smoke-panel-client` | 设置面板：列图、选中态、**面板不被壁纸收场带走** |
 | `smoke-host` | Cordis 契约（只认 `default` 导出） |
@@ -349,6 +360,8 @@ node test/smoke-once.mjs test/client.nofix.js
 | **叠化晚了 780ms** | 开机动画与视频之间闪一下聊天窗口 | 只盯 `dsu-gone`，而它**开始**淡出是更早的 `dsu-handoff`（780ms）。 |
 | **改代码之后只刷新** | `web boot: 1 entry did not activate`，应用起不来 | 在宿主**运行期间**改插件客户端文件 → 宿主登记表的 `rev` 过期 → 404 → 入口没激活 → DSH 拒绝启动。**改 `lib/*.js` → 重启；改配置/换图 → 刷新。** 启动失败时用对话框里的「禁用第三方插件、备份 profile patch 并重启」兜底。 |
 | **测试没在测该测的东西** | 回归测试全绿，但 bug 照样发作 | 测试直接调内部函数、绕过了真实入口（`applyNow` 才是设 `current` 的地方）。**红绿对照**才查出来。 |
+| **桌面版解码 H.264 失败，壁纸陪葬** | 日志一声"视频解码失败（code 3）"，视频和底图、横幅**一起消失** | 桌面版 Electron **不带 H.264 解码器**，片库的 mp4 一放就是 `PIPELINE_ERROR_DECODE`。旧实现对所有 `error` 无差别 `teardown()` —— 可底图和横幅是无辜的。**现在 code 3 只撤视频层**（复用 finishOnce 的"有底图就留 CSS"那套），日志给出转码命令；加载失败（文件真不在）仍是全撤。红绿对照：`git show v0.2.2:lib/client.js > old.js && node test/smoke-decode.mjs old.js` 应当变红。 |
+| **package.json 是 GBK 编码** | Node 24 下 `npm test` 直接 `ERR_INVALID_PACKAGE_CONFIG`，一个套件都跑不了 | 文件被某版工具按 GBK 写过，中文描述的字节不是合法 UTF-8，Node 的包配置读取器直接拒收。**整个文件重写为 UTF-8**（内容不变），顺手把测试链补上 `smoke-decode`。 |
 
 ---
 
