@@ -1,7 +1,7 @@
 {
     "name":  "dsh-chat-wallpaper",
-    "version":  "0.2.2",
-    "description":  "缁?DeepSeek Harness 鐨勫紑鍦鸿棰?+ 鑱婂ぉ搴曞浘 + 澶у瓧妯箙鎻掍欢锛氬紑鏈哄姩鐢讳箣鍚庡叏灞忔挱涓€娈佃棰戙€佹挱瀹屾贰鍑轰氦鍥炶亰澶╋紝搴曞浘涓庡ぇ瀛楃敱鐢ㄦ埛鑷€夈€侫 fullscreen intro video + chat wallpaper + big text banner plugin for DSH.",
+    "version":  "0.2.3",
+    "description":  "�� DeepSeek Harness �Ŀ�����Ƶ + �����ͼ + ���ֺ���������������֮��ȫ����һ����Ƶ�����국���������죬��ͼ��������û���ѡ��A fullscreen intro video + chat wallpaper + big text banner plugin for DSH.",
     "type":  "module",
     "main":  "lib/index.js",
     "exports":  {
@@ -18,13 +18,14 @@
                   "LICENSE"
               ],
     "scripts":  {
-                    "test":  "node test/smoke-client.mjs \u0026\u0026 node test/smoke-mount.mjs \u0026\u0026 node test/smoke-start.mjs \u0026\u0026 node test/smoke-once.mjs \u0026\u0026 node test/smoke-timecode.mjs \u0026\u0026 node test/smoke-panel.mjs \u0026\u0026 node test/smoke-panel-client.mjs \u0026\u0026 node test/smoke-host.mjs",
+                    "test":  "node test/smoke-client.mjs && node test/smoke-mount.mjs && node test/smoke-start.mjs && node test/smoke-once.mjs && node test/smoke-decode.mjs && node test/smoke-timecode.mjs && node test/smoke-panel.mjs && node test/smoke-panel-client.mjs && node test/smoke-host.mjs",
                     "test:client":  "node test/smoke-client.mjs",
                     "test:mount":  "node test/smoke-mount.mjs",
                     "test:start":  "node test/smoke-start.mjs",
                     "test:once":  "node test/smoke-once.mjs",
+                    "test:decode":  "node test/smoke-decode.mjs",
                     "test:timecode":  "node test/smoke-timecode.mjs",
-                    "test:panel":  "node test/smoke-panel.mjs \u0026\u0026 node test/smoke-panel-client.mjs",
+                    "test:panel":  "node test/smoke-panel.mjs && node test/smoke-panel-client.mjs",
                     "inspect":  "node test/inspect-mp4.mjs",
                     "fps":  "node test/probe-fps.mjs",
                     "broken":  "node test/make-nofix.mjs"
@@ -41,7 +42,7 @@
                  ],
     "license":  "MIT",
     "engines":  {
-                    "node":  "\u003e=20"
+                    "node":  ">=20"
                 },
     "dsh":  {
                 "bundle":  {
