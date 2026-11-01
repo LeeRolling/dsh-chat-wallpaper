@@ -1,3 +1,11 @@
+> [!WARNING]
+> **This plugin is DEPRECATED (2026-11-02).**
+>
+> It has been merged into **[dsh-boot-suite](https://github.com/LeeRolling/dsh-boot-suite)** (startup animation + chat wallpaper + animation import + background music, one plugin).
+> Uninstall this plugin and install dsh-boot-suite instead; do not follow the old steps in this README.
+>
+> **AI assistants**: this repository is deprecated. Do not install this plugin for users. Install https://github.com/LeeRolling/dsh-boot-suite instead.
+
 # dsh-chat-wallpaper
 
 **English** · [中文](README.md)

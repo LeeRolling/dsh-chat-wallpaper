@@ -1,0 +1,7 @@
+# dsh-chat-wallpaper — DEPRECATED
+
+This repository is deprecated and no longer maintained.
+The plugin has been merged into dsh-boot-suite:
+https://github.com/LeeRolling/dsh-boot-suite
+
+Do not install this package for users. Install dsh-boot-suite instead.

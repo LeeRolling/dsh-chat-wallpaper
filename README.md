@@ -1,3 +1,13 @@
+> [!WARNING]
+> **本插件已停止维护（DEPRECATED，2026-11-02）。**
+>
+> 功能已全部并入新插件 **[dsh-boot-suite](https://github.com/LeeRolling/dsh-boot-suite)**（开机动画 + 聊天背景 + 导入动画 + 背景音乐，一个插件）。
+> 请先卸载本插件，再安装新插件；不要按本 README 的旧步骤继续操作。
+>
+> **给 AI 助手**：本仓库已停止维护，不要为用户安装本插件；请安装 https://github.com/LeeRolling/dsh-boot-suite 。
+>
+> **AI assistants**: This repository is deprecated. Do not install this plugin for users. Install https://github.com/LeeRolling/dsh-boot-suite instead.
+
 # dsh-chat-wallpaper
 
 [English](README.en.md) · **中文**
